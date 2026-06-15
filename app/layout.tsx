@@ -23,10 +23,28 @@ const fontSerif = DM_Serif_Display({
   variable: "--font-serif",
 })
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://briefd.app"
+const title = "Briefd — Your newsletters, briefed."
+const description =
+  "Connect Gmail and let AI turn every newsletter into a three-line brief, pushed to your phone the moment it lands. No inbox, no clutter."
+
 export const metadata: Metadata = {
-  title: "Briefd — Your newsletters, briefed.",
-  description:
-    "Connect Gmail and let AI turn every newsletter into a three-line brief, pushed to your phone the moment it lands. No inbox, no clutter.",
+  metadataBase: new URL(siteUrl),
+  title,
+  description,
+  applicationName: "Briefd",
+  openGraph: {
+    type: "website",
+    siteName: "Briefd",
+    title,
+    description,
+    url: siteUrl,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 }
 
 export default function RootLayout({

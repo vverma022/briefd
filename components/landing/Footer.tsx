@@ -1,6 +1,7 @@
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Linkedin01Icon, NewTwitterIcon } from "@hugeicons/core-free-icons"
 
+import { BriefdLogo } from "@/components/brand/logo"
 import { ModeToggle } from "@/components/mode-toggle"
 
 const columns = [
@@ -17,9 +18,7 @@ export function Footer() {
     <footer className="relative z-10 w-full border-t border-foreground/10 pb-32 md:pb-12">
       <div className="mx-auto grid w-[92vw] grid-cols-2 gap-10 py-14 md:grid-cols-5">
         <div className="col-span-2 flex flex-col gap-4">
-          <span className="font-mono text-sm tracking-[0.4em] text-foreground uppercase">
-            Briefd
-          </span>
+          <BriefdLogo />
           <p className="max-w-xs font-mono text-[11px] leading-relaxed tracking-wide text-foreground/40">
             Newsletters arrive. AI summarizes. You get briefed. No inbox, no
             clutter.
