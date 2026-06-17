@@ -1,4 +1,4 @@
-import { ogAlt, ogSize, renderBrandOg } from "@/lib/og"
+import { ogAlt, ogSize, renderBrandOg } from "@/assets/og"
 
 export const alt = ogAlt
 export const size = ogSize
