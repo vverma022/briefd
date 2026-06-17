@@ -1,4 +1,9 @@
 export const config = {
+  isDev: process.env.NODE_ENV === "development",
+  isProd: process.env.NODE_ENV === "production",
+  site: {
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://briefd.app",
+  },
   db: {
     url: process.env.DATABASE_URL,
   },
