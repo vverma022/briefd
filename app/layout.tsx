@@ -2,8 +2,9 @@ import type { Metadata } from "next"
 import { DM_Serif_Display, Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { Providers } from "./providers"
 import { cn } from "@/lib/utils"
+import { config } from "@/lib/config"
 
 const fontSans = Inter({
   subsets: ["latin"],
@@ -23,7 +24,7 @@ const fontSerif = DM_Serif_Display({
   variable: "--font-serif",
 })
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://briefd.app"
+const siteUrl = config.site.url
 const title = "Briefd — Your newsletters, briefed."
 const description =
   "Connect Gmail and let AI turn every newsletter into a three-line brief, pushed to your phone the moment it lands. No inbox, no clutter."
@@ -65,9 +66,7 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ThemeProvider defaultTheme="dark" enableSystem>
-          {children}
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

@@ -108,6 +108,11 @@
     --nav-blur-bg: rgba(255, 255, 255, 0.85);
     --btn-glow: rgba(0, 0, 0, 0.12);
     --noise-opacity: 0.035;
+
+    /* Semantic toast accents (success / error / warning-orange) */
+    --toast-success: oklch(0.6 0.14 152);
+    --toast-error: oklch(0.55 0.2 25);
+    --toast-warning: oklch(0.68 0.16 60);
 }
 
 /* ── Dark (Modern Obsidian) ───────────────────────────────────────── */
@@ -160,6 +165,11 @@
     --nav-blur-bg: rgba(8, 8, 8, 0.85);
     --btn-glow: rgba(255, 255, 255, 0.15);
     --noise-opacity: 0.05;
+
+    /* Semantic toast accents (brighter for the obsidian surface) */
+    --toast-success: oklch(0.78 0.16 152);
+    --toast-error: oklch(0.7 0.19 25);
+    --toast-warning: oklch(0.8 0.16 60);
 }
 
 @layer base {
@@ -258,4 +268,30 @@ body::before {
 .animate-slide-up {
     opacity: 0;
     animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Themed sonner toasts (success / error / warning) ─────────────────
+ * Each variant overrides sonner's --normal-* vars so the toast keeps the
+ * theme-aware popover surface but gains a semantic accent (border + icon +
+ * a faint tint). Warning is orange. Adapts to light/dark via the tokens. */
+.cn-toast-success {
+    --normal-border: var(--toast-success);
+    --normal-bg: color-mix(in oklch, var(--popover), var(--toast-success) 8%);
+}
+.cn-toast-error {
+    --normal-border: var(--toast-error);
+    --normal-bg: color-mix(in oklch, var(--popover), var(--toast-error) 8%);
+}
+.cn-toast-warning {
+    --normal-border: var(--toast-warning);
+    --normal-bg: color-mix(in oklch, var(--popover), var(--toast-warning) 8%);
+}
+.cn-toast-success [data-icon] {
+    color: var(--toast-success);
+}
+.cn-toast-error [data-icon] {
+    color: var(--toast-error);
+}
+.cn-toast-warning [data-icon] {
+    color: var(--toast-warning);
 }
