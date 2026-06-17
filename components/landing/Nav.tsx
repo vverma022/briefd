@@ -1,7 +1,9 @@
+import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Menu01Icon } from "@hugeicons/core-free-icons"
 
 import { BriefdLogo } from "@/components/brand/logo"
+import { config } from "@/lib/config"
 
 const links = [
   { label: "Features", href: "#features" },
@@ -28,12 +30,21 @@ export function Nav() {
             </a>
           ))}
         </div>
-        <a
-          href="#join"
-          className="silver-btn rounded-full px-6 py-3 font-mono text-[11px] font-bold tracking-[0.25em] uppercase"
-        >
-          Join waitlist
-        </a>
+        {config.isDev ? (
+          <Link
+            href="/onboarding"
+            className="silver-btn rounded-full px-6 py-3 font-mono text-[11px] font-bold tracking-[0.25em] uppercase"
+          >
+            Get started
+          </Link>
+        ) : (
+          <a
+            href="#join"
+            className="silver-btn rounded-full px-6 py-3 font-mono text-[11px] font-bold tracking-[0.25em] uppercase"
+          >
+            Join waitlist
+          </a>
+        )}
       </nav>
 
       <button

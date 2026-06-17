@@ -12,11 +12,16 @@ import {
 } from "@hugeicons/core-free-icons"
 
 import { cn } from "@/lib/utils"
+import { config } from "@/lib/config"
 
 const items: { icon: IconSvgElement; label: string; href: string }[] = [
   { icon: Home01Icon, label: "Home", href: "#" },
   { icon: BookOpen01Icon, label: "How", href: "#features" },
-  { icon: SparklesIcon, label: "Join", href: "#join" },
+  {
+    icon: SparklesIcon,
+    label: config.isDev ? "Start" : "Join",
+    href: config.isDev ? "/onboarding" : "#join",
+  },
   { icon: Mail01Icon, label: "Sources", href: "#sources" },
   { icon: StarIcon, label: "Reviews", href: "#reviews" },
 ]
@@ -44,7 +49,7 @@ export function MobileNav() {
       style={{ transitionTimingFunction: "cubic-bezier(0.16,1,0.3,1)" }}
     >
       {items.map((item) => {
-        const primary = item.label === "Join"
+        const primary = item.href === "/onboarding" || item.label === "Join"
         return (
           <a
             key={item.label}
