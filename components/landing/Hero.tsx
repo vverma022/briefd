@@ -1,7 +1,7 @@
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
 
-import { WaitlistForm } from "@/components/landing/WaitlistForm"
+import { LandingCta } from "@/components/landing/LandingCta"
 
 const metadata = [
   { label: "Source", value: "Your Gmail inbox" },
@@ -70,7 +70,7 @@ export function Hero() {
           className="animate-slide-up w-full"
           style={{ animationDelay: "0.4s" }}
         >
-          <WaitlistForm />
+          <LandingCta />
         </div>
 
         <div className="mt-2 flex flex-col items-center gap-2 text-foreground/30">

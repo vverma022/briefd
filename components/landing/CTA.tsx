@@ -1,4 +1,4 @@
-import { WaitlistForm } from "@/components/landing/WaitlistForm"
+import { LandingCta } from "@/components/landing/LandingCta"
 
 export function CTA() {
   return (
@@ -18,7 +18,7 @@ export function CTA() {
         Join the waitlist and we&apos;ll email you the moment Briefd opens up.
       </p>
 
-      <WaitlistForm />
+      <LandingCta />
     </section>
   )
 }
