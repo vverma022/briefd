@@ -15,6 +15,11 @@ export const config = {
       secret: process.env.AUTH_GOOGLE_SECRET,
     },
   },
+  ai: {
+    provider: process.env.AI_PROVIDER ?? "google",
+    model: process.env.AI_MODEL ?? "gemini-2.5-flash",
+  },
+  cronSecret: process.env.CRON_SECRET,
 } as const
 
 export type Config = typeof config
