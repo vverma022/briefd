@@ -5,21 +5,29 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowRight01Icon,
   CheckmarkBadge01Icon,
+  Loading03Icon,
 } from "@hugeicons/core-free-icons"
+
+import { useJoinWaitlistMutation } from "@/queries/waitlist"
 
 export function WaitlistForm() {
   const [email, setEmail] = React.useState("")
-  const [submitted, setSubmitted] = React.useState(false)
+  const { mutate, isPending, data, isSuccess } = useJoinWaitlistMutation()
+
+  // Show the confirmation view only for a fresh signup; duplicates get a toast
+  // (handled in the mutation) and stay on the form.
+  const joined = isSuccess && data?.status === "joined"
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!email.trim()) return
-    setSubmitted(true)
+    const value = email.trim()
+    if (!value || isPending) return
+    mutate({ email: value })
   }
 
   return (
     <div className="mx-auto w-full max-w-xl">
-      {submitted ? (
+      {joined ? (
         <div className="frosted-glass flex items-center justify-center gap-3 rounded-2xl px-6 py-5 text-center">
           <HugeiconsIcon
             icon={CheckmarkBadge01Icon}
@@ -42,14 +50,21 @@ export function WaitlistForm() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="you@gmail.com"
-            className="w-full flex-1 bg-transparent px-5 py-3.5 font-mono text-sm tracking-wide text-foreground placeholder:text-foreground/30 focus:outline-none"
+            disabled={isPending}
+            className="w-full flex-1 bg-transparent px-5 py-3.5 font-mono text-sm tracking-wide text-foreground placeholder:text-foreground/30 focus:outline-none disabled:opacity-60"
           />
           <button
             type="submit"
-            className="silver-btn flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-mono text-[12px] font-bold tracking-[0.25em] uppercase"
+            disabled={isPending}
+            className="silver-btn flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-mono text-[12px] font-bold tracking-[0.25em] uppercase disabled:opacity-70"
           >
-            Join the waitlist
-            <HugeiconsIcon icon={ArrowRight01Icon} size={16} strokeWidth={2} />
+            {isPending ? "Joining" : "Join the waitlist"}
+            <HugeiconsIcon
+              icon={isPending ? Loading03Icon : ArrowRight01Icon}
+              size={16}
+              strokeWidth={2}
+              className={isPending ? "animate-spin" : undefined}
+            />
           </button>
         </form>
       )}

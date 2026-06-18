@@ -4,3 +4,4 @@
 export * from "./sender"
 export * from "./newsletter"
 export * from "./watched-sender"
+export * from "./waitlist"
