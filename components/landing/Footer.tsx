@@ -1,16 +1,37 @@
+import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Linkedin01Icon, NewTwitterIcon } from "@hugeicons/core-free-icons"
+import { Linkedin01Icon } from "@hugeicons/core-free-icons"
 
 import { BriefdLogo } from "@/components/brand/logo"
 import { ModeToggle } from "@/components/mode-toggle"
+import { config } from "@/lib/config"
 
-const columns = [
+type FooterLink = { label: string; href: string }
+
+const columns: { title: string; links: FooterLink[] }[] = [
   {
     title: "Product",
-    links: ["How it works", "Sources", "Install app", "Reviews"],
+    links: [
+      { label: "How it works", href: "/how-it-works" },
+      { label: "Sources", href: "/#sources" },
+      { label: "Reviews", href: "/#reviews" },
+    ],
   },
-  { title: "Company", links: ["About", "Blog", "Contact"] },
-  { title: "Legal", links: ["Privacy", "Terms", "Gmail access"] },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Gmail access", href: "/gmail-access" },
+    ],
+  },
 ]
 
 export function Footer() {
@@ -24,15 +45,19 @@ export function Footer() {
             clutter.
           </p>
           <div className="mt-2 flex items-center gap-3">
-            {[NewTwitterIcon, Linkedin01Icon].map((icon, i) => (
-              <a
-                key={i}
-                href="#"
-                className="flex size-9 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground/60 transition-colors hover:text-foreground"
-              >
-                <HugeiconsIcon icon={icon} size={16} strokeWidth={1.5} />
-              </a>
-            ))}
+            <a
+              href={config.site.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="flex size-9 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground/60 transition-colors hover:text-foreground"
+            >
+              <HugeiconsIcon
+                icon={Linkedin01Icon}
+                size={16}
+                strokeWidth={1.5}
+              />
+            </a>
             <span className="mx-1 h-5 w-px bg-foreground/10" />
             <ModeToggle />
           </div>
@@ -45,13 +70,13 @@ export function Footer() {
             </span>
             <ul className="flex flex-col gap-3">
               {column.links.map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
                     className="font-mono text-[12px] tracking-wide text-foreground/60 transition-colors hover:text-foreground"
                   >
-                    {link}
-                  </a>
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>

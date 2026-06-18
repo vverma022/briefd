@@ -3,6 +3,8 @@ export const config = {
   isProd: process.env.NODE_ENV === "production",
   site: {
     url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://briefd.app",
+    email: "vermavasu069@gmail.com",
+    linkedin: "https://www.linkedin.com/in/vasu-verma-3735a2245/",
   },
   db: {
     url: process.env.DATABASE_URL,
