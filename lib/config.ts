@@ -3,6 +3,8 @@ export const config = {
   isProd: process.env.NODE_ENV === "production",
   site: {
     url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://briefd.app",
+    email: "vermavasu069@gmail.com",
+    linkedin: "https://www.linkedin.com/in/vasu-verma-3735a2245/",
   },
   db: {
     url: process.env.DATABASE_URL,
@@ -20,6 +22,13 @@ export const config = {
     model: process.env.AI_MODEL ?? "gemini-2.5-flash",
   },
   cronSecret: process.env.CRON_SECRET,
+  smtp: {
+    host: process.env.SMTP_HOST ?? "smtp.gmail.com",
+    port: Number(process.env.SMTP_PORT ?? 465),
+    user: process.env.SMTP_USER,
+    password: process.env.SMTP_PASSWORD,
+    from: process.env.SMTP_FROM ?? "Briefd <no-reply@briefd.app>",
+  },
 } as const
 
 export type Config = typeof config

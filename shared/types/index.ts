@@ -12,6 +12,10 @@ import type {
 } from "@/shared/schemas/newsletter"
 import type { watchedSenderSchema } from "@/shared/schemas/watched-sender"
 import type { digestSummarySchema } from "@/shared/schemas/digest"
+import type {
+  joinWaitlistSchema,
+  joinWaitlistResponseSchema,
+} from "@/shared/schemas/waitlist"
 
 export type SenderInput = z.infer<typeof senderInputSchema>
 export type AddSendersInput = z.infer<typeof addSendersSchema>
@@ -20,3 +24,5 @@ export type NewsletterCandidate = z.infer<typeof newsletterCandidateSchema>
 export type NewslettersResponse = z.infer<typeof newslettersResponseSchema>
 export type WatchedSender = z.infer<typeof watchedSenderSchema>
 export type DigestSummary = z.infer<typeof digestSummarySchema>
+export type JoinWaitlistInput = z.infer<typeof joinWaitlistSchema>
+export type JoinWaitlistResponse = z.infer<typeof joinWaitlistResponseSchema>
