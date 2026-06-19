@@ -7,7 +7,10 @@ import {
   NeedsReauthError,
 } from "@/app/api/_shared/google"
 import { gmailClient } from "@/app/api/_shared/gmail"
+import { organizeNewsletters } from "@/app/api/_shared/ai"
 import type { NewsletterCandidate } from "@/shared/types"
+
+type DetectedSender = Omit<NewsletterCandidate, "category" | "isNoise">
 
 export const runtime = "nodejs"
 export const maxDuration = 60
@@ -57,12 +60,15 @@ function isNewsletterHeaders(headers: gmail_v1.Schema$MessagePartHeader[]) {
 async function detectNewsletters(
   accessToken: string,
   watchedEmails: Set<string>
-): Promise<NewsletterCandidate[]> {
+): Promise<DetectedSender[]> {
   const gmail = gmailClient(accessToken)
   const LOOKBACK_DAYS = 90
-  const MAX_MESSAGES = 250
+  // 150 messages is plenty to surface distinct newsletter senders, and fewer
+  // per-message gets means less time on the critical path. Concurrency 25 stays
+  // within Gmail's per-user budget (~50 metadata gets/sec; get = 5 quota units).
+  const MAX_MESSAGES = 150
   const PAGE_SIZE = 100
-  const METADATA_CONCURRENCY = 10
+  const METADATA_CONCURRENCY = 25
   const query =
     `newer_than:${LOOKBACK_DAYS}d ` +
     "(category:promotions OR category:updates OR category:forums OR unsubscribe)"
@@ -131,7 +137,13 @@ export async function GET() {
       select: { senderEmail: true },
     })
     const watchedEmails = new Set(watched.map((w) => w.senderEmail))
-    const candidates = await detectNewsletters(token, watchedEmails)
+    const detected = await detectNewsletters(token, watchedEmails)
+
+    const organized = await organizeNewsletters(detected)
+    const candidates: NewsletterCandidate[] = detected.map((c) => {
+      const o = organized.get(c.senderEmail)
+      return { ...c, category: o?.category ?? "Other", isNoise: o?.isNoise ?? false }
+    })
     return Response.json({ candidates })
   } catch (e) {
     if (e instanceof NeedsReauthError) {
