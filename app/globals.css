@@ -271,6 +271,39 @@ body::before {
     animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Animated trailing dots for staged loaders (StagedLoader). The three dots
+ * always occupy the same space and only their opacity animates, so the label
+ * next to them never shifts. */
+@keyframes loading-dot {
+    0%,
+    80%,
+    100% {
+        opacity: 0.2;
+    }
+    40% {
+        opacity: 1;
+    }
+}
+.loading-dots {
+    display: inline-flex;
+    gap: 0.18em;
+    margin-left: 0.35em;
+    vertical-align: middle;
+}
+.loading-dots > span {
+    width: 0.26em;
+    height: 0.26em;
+    border-radius: 9999px;
+    background: currentColor;
+    animation: loading-dot 1.4s ease-in-out infinite;
+}
+.loading-dots > span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.loading-dots > span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
 /* ── Themed sonner toasts (success / error / warning) ─────────────────
  * Each variant overrides sonner's --normal-* vars so the toast keeps the
  * theme-aware popover surface but gains a semantic accent (border + icon +
