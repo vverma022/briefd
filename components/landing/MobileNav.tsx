@@ -28,10 +28,28 @@ const items: { icon: IconSvgElement; label: string; href: string }[] = [
 
 export function MobileNav() {
   const [visible, setVisible] = React.useState(false)
+  const [active, setActive] = React.useState(items[0].label)
 
   React.useEffect(() => {
+    const targets = items
+      .filter((item) => item.href.startsWith("#") && item.href.length > 1)
+      .map((item) => ({
+        label: item.label,
+        el: document.getElementById(item.href.slice(1)),
+      }))
+      .filter((target): target is { label: string; el: HTMLElement } =>
+        Boolean(target.el)
+      )
+
     function onScroll() {
       setVisible(window.scrollY > window.innerHeight * 0.8)
+
+      const line = window.innerHeight * 0.4
+      let current = items[0].label
+      for (const { label, el } of targets) {
+        if (el.getBoundingClientRect().top <= line) current = label
+      }
+      setActive(current)
     }
     onScroll()
     window.addEventListener("scroll", onScroll, { passive: true })
@@ -50,6 +68,7 @@ export function MobileNav() {
     >
       {items.map((item) => {
         const primary = item.href === "/onboarding" || item.label === "Join"
+        const isActive = active === item.label
         return (
           <a
             key={item.label}
@@ -58,7 +77,9 @@ export function MobileNav() {
               "flex flex-col items-center gap-1 rounded-full px-3 py-2 transition-colors",
               primary
                 ? "bg-foreground text-background"
-                : "text-foreground/55 hover:text-foreground"
+                : isActive
+                  ? "bg-foreground/10 text-foreground"
+                  : "text-foreground/55 hover:text-foreground"
             )}
           >
             <HugeiconsIcon icon={item.icon} size={18} strokeWidth={1.5} />
