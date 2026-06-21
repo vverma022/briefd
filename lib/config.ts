@@ -1,8 +1,10 @@
+import { normalizeUrl } from "@/lib/utils"
+
 export const config = {
   isDev: process.env.NODE_ENV === "development",
   isProd: process.env.NODE_ENV === "production",
   site: {
-    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://briefd.app",
+    url: normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL, "https://briefd.app"),
     email: "vermavasu069@gmail.com",
     linkedin: "https://www.linkedin.com/in/vasu-verma-3735a2245/",
   },

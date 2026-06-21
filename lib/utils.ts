@@ -27,3 +27,8 @@ export function deepTrim<T>(value: T): T {
   }
   return value
 }
+
+export function normalizeUrl(raw: string | undefined, fallback: string): string {
+  const value = raw?.trim() || fallback
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`
+}

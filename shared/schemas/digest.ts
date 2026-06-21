@@ -15,3 +15,31 @@ export const digestSummarySchema = z.object({
     .string()
     .describe("one word, e.g. motivational / analytical / narrative / how-to"),
 })
+
+// A persisted digest serialized for the wire. Prisma Date fields are ISO strings
+// over JSON, so receivedAt/createdAt are strings. rawText is intentionally NEVER
+// part of any client shape (large; only the AI summarizer reads it).
+export const digestSchema = z.object({
+  id: z.string(),
+  senderEmail: z.string(),
+  senderName: z.string().nullable(),
+  subject: z.string(),
+  receivedAt: z.string(),
+  createdAt: z.string(),
+  summary: digestSummarySchema.nullable(),
+  summarizationPending: z.boolean(),
+  isRead: z.boolean(),
+  isSaved: z.boolean(),
+  gmailMessageId: z.string(),
+  gmailThreadId: z.string().nullable(),
+})
+
+export const digestListResponseSchema = z.object({
+  items: z.array(digestSchema),
+  nextCursor: z.string().nullable(),
+})
+
+export const updateDigestSchema = z.object({
+  isRead: z.boolean().optional(),
+  isSaved: z.boolean().optional(),
+})

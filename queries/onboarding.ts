@@ -3,10 +3,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getNewsletters, completeOnboarding } from "@/services/onboarding"
 import { sendersKeys, onboardingKeys } from "@/queries/keys"
 
-export function useNewslettersQuery() {
+// `enabled` lets callers run detection lazily (e.g. the Sources page only scans
+// Gmail when the user clicks "Discover"). Onboarding leaves it on by default.
+export function useNewslettersQuery(enabled = true) {
   return useQuery({
     queryKey: onboardingKeys.newsletters,
     queryFn: getNewsletters,
+    enabled,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: (failureCount, error) =>

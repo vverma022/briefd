@@ -14,6 +14,11 @@ model User {
   emailVerified         DateTime?
   image                 String?
   onboardingCompletedAt DateTime?
+  // Email-digest delivery preferences. Sending itself is wired up later; these
+  // just persist the user's choice. digestDeliveryHour is 0-23 in their tz.
+  digestEmailEnabled    Boolean         @default(false)
+  digestDeliveryHour    Int             @default(8)
+  digestTimezone        String?
   accounts              Account[]
   sessions              Session[]
   watchedSenders        WatchedSender[]
@@ -101,6 +106,7 @@ model Digest {
   summarizationPending Boolean        @default(true)
   summarizeAttempts    Int            @default(0)
   isRead               Boolean        @default(false)
+  isSaved              Boolean        @default(false)
   createdAt            DateTime       @default(now())
   user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -108,6 +114,7 @@ model Digest {
   @@unique([userId, gmailMessageId])
   @@index([userId, createdAt(sort: Desc)])
   @@index([userId, isRead, createdAt(sort: Desc)])
+  @@index([userId, isSaved, createdAt(sort: Desc)])
   @@index([summarizationPending, summarizeAttempts])
   @@map("digests")
 }

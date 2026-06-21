@@ -395,9 +395,7 @@ function CategoryChip({
         muted && !active && "text-foreground/40"
       )}
     >
-      {icon ? (
-        <HugeiconsIcon icon={icon} size={13} strokeWidth={1.8} />
-      ) : null}
+      {icon ? <HugeiconsIcon icon={icon} size={13} strokeWidth={1.8} /> : null}
       <span>{label}</span>
       <span className="font-mono text-[10px] tracking-wide opacity-60">
         {count}

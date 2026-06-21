@@ -1,6 +1,6 @@
 "use client"
 
-import { useTheme } from "next-themes"
+import { useTheme } from "@/components/theme-provider"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Moon02Icon, Sun01Icon } from "@hugeicons/core-free-icons"
 

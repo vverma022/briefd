@@ -142,7 +142,11 @@ export async function GET() {
     const organized = await organizeNewsletters(detected)
     const candidates: NewsletterCandidate[] = detected.map((c) => {
       const o = organized.get(c.senderEmail)
-      return { ...c, category: o?.category ?? "Other", isNoise: o?.isNoise ?? false }
+      return {
+        ...c,
+        category: o?.category ?? "Other",
+        isNoise: o?.isNoise ?? false,
+      }
     })
     return Response.json({ candidates })
   } catch (e) {
