@@ -24,7 +24,10 @@ export function StagedLoader({
 
   React.useEffect(() => {
     if (index >= last) return
-    const t = setTimeout(() => setIndex((i) => Math.min(i + 1, last)), intervalMs)
+    const t = setTimeout(
+      () => setIndex((i) => Math.min(i + 1, last)),
+      intervalMs
+    )
     return () => clearTimeout(t)
   }, [index, last, intervalMs])
 

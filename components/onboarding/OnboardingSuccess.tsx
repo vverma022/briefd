@@ -20,12 +20,12 @@ export function OnboardingSuccess() {
           You&apos;re all <span className="silver-text">set.</span>
         </h1>
         <p className="mx-auto max-w-md font-sans text-sm leading-relaxed font-light text-foreground/60">
-          We&apos;ll start briefing your newsletters. You can manage your
-          sources any time — your dashboard is coming soon.
+          We&apos;ll start briefing your newsletters. Head to your dashboard to
+          read them as they arrive.
         </p>
       </div>
       <Button asChild variant="silver" size="lg">
-        <Link href="/">Back to home</Link>
+        <Link href="/dashboard">Go to dashboard</Link>
       </Button>
     </div>
   )

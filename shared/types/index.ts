@@ -1,5 +1,3 @@
-// All shared types are INFERRED from the Zod schemas in "@/shared/schemas" so
-// the validators are the single source of truth. Import from "@/shared/types".
 import type { z } from "zod"
 import type {
   senderInputSchema,
@@ -11,7 +9,12 @@ import type {
   newslettersResponseSchema,
 } from "@/shared/schemas/newsletter"
 import type { watchedSenderSchema } from "@/shared/schemas/watched-sender"
-import type { digestSummarySchema } from "@/shared/schemas/digest"
+import type {
+  digestSummarySchema,
+  digestSchema,
+  digestListResponseSchema,
+  updateDigestSchema,
+} from "@/shared/schemas/digest"
 import type {
   joinWaitlistSchema,
   joinWaitlistResponseSchema,
@@ -24,5 +27,8 @@ export type NewsletterCandidate = z.infer<typeof newsletterCandidateSchema>
 export type NewslettersResponse = z.infer<typeof newslettersResponseSchema>
 export type WatchedSender = z.infer<typeof watchedSenderSchema>
 export type DigestSummary = z.infer<typeof digestSummarySchema>
+export type Digest = z.infer<typeof digestSchema>
+export type DigestListResponse = z.infer<typeof digestListResponseSchema>
+export type UpdateDigestInput = z.infer<typeof updateDigestSchema>
 export type JoinWaitlistInput = z.infer<typeof joinWaitlistSchema>
 export type JoinWaitlistResponse = z.infer<typeof joinWaitlistResponseSchema>

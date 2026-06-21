@@ -94,9 +94,7 @@ export function FlowDiagram() {
               <div
                 className="flex size-20 shrink-0 items-center justify-center rounded-2xl border border-foreground/10 bg-background"
                 style={
-                  node.accent
-                    ? { borderColor: `${GMAIL_RED}55` }
-                    : undefined
+                  node.accent ? { borderColor: `${GMAIL_RED}55` } : undefined
                 }
               >
                 <HugeiconsIcon

@@ -101,6 +101,7 @@ model Digest {
   summarizationPending Boolean        @default(true)
   summarizeAttempts    Int            @default(0)
   isRead               Boolean        @default(false)
+  isSaved              Boolean        @default(false)
   createdAt            DateTime       @default(now())
   user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -108,6 +109,7 @@ model Digest {
   @@unique([userId, gmailMessageId])
   @@index([userId, createdAt(sort: Desc)])
   @@index([userId, isRead, createdAt(sort: Desc)])
+  @@index([userId, isSaved, createdAt(sort: Desc)])
   @@index([summarizationPending, summarizeAttempts])
   @@map("digests")
 }

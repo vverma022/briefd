@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { config } from "@/lib/config"
 
 function makeQueryClient() {
@@ -36,7 +37,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <ThemeProvider defaultTheme="dark" enableSystem>
         <QueryClientProvider client={queryClient}>
-          {children}
+          <TooltipProvider delayDuration={300}>{children}</TooltipProvider>
           {config.isDev ? <ReactQueryDevtools initialIsOpen={false} /> : null}
         </QueryClientProvider>
         <Toaster />

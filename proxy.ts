@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-const PROTECTED = ["/dashboard", "/settings"]
+const PROTECTED = ["/dashboard", "/settings", "/digest"]
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -20,5 +20,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/settings/:path*"],
+  matcher: ["/dashboard/:path*", "/settings/:path*", "/digest/:path*"],
 }
