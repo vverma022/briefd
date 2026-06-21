@@ -14,6 +14,11 @@ model User {
   emailVerified         DateTime?
   image                 String?
   onboardingCompletedAt DateTime?
+  // Email-digest delivery preferences. Sending itself is wired up later; these
+  // just persist the user's choice. digestDeliveryHour is 0-23 in their tz.
+  digestEmailEnabled    Boolean         @default(false)
+  digestDeliveryHour    Int             @default(8)
+  digestTimezone        String?
   accounts              Account[]
   sessions              Session[]
   watchedSenders        WatchedSender[]

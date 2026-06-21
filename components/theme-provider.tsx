@@ -1,24 +1,71 @@
 "use client"
 
 import * as React from "react"
-import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
 
-function ThemeProvider({
+import { DEFAULT_THEME, THEME_COOKIE, type Theme } from "@/lib/theme"
+
+function writeThemeCookie(theme: Theme) {
+  document.cookie = `${THEME_COOKIE}=${theme}; path=/; max-age=31536000; samesite=lax`
+}
+
+function applyTheme(theme: Theme) {
+  const el = document.documentElement
+  el.classList.toggle("dark", theme === "dark")
+  el.style.colorScheme = theme
+}
+
+type ThemeContextValue = {
+  theme: Theme
+  resolvedTheme: Theme
+  setTheme: (theme: Theme) => void
+  toggleTheme: () => void
+}
+
+const ThemeContext = React.createContext<ThemeContextValue | null>(null)
+
+export function ThemeProvider({
   children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
+  initialTheme = DEFAULT_THEME,
+}: {
+  children: React.ReactNode
+  initialTheme?: Theme
+}) {
+  const [theme, setThemeState] = React.useState<Theme>(initialTheme)
+
+  const setTheme = React.useCallback((next: Theme) => {
+    setThemeState(next)
+    applyTheme(next)
+    writeThemeCookie(next)
+  }, [])
+
+  const toggleTheme = React.useCallback(() => {
+    setThemeState((prev) => {
+      const next: Theme = prev === "dark" ? "light" : "dark"
+      applyTheme(next)
+      writeThemeCookie(next)
+      return next
+    })
+  }, [])
+
+  const value = React.useMemo(
+    () => ({ theme, resolvedTheme: theme, setTheme, toggleTheme }),
+    [theme, setTheme, toggleTheme]
+  )
+
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-      {...props}
-    >
+    <ThemeContext.Provider value={value}>
       <ThemeHotkey />
       {children}
-    </NextThemesProvider>
+    </ThemeContext.Provider>
   )
+}
+
+export function useTheme() {
+  const ctx = React.useContext(ThemeContext)
+  if (!ctx) {
+    throw new Error("useTheme must be used within a ThemeProvider")
+  }
+  return ctx
 }
 
 function isTypingTarget(target: EventTarget | null) {
@@ -35,7 +82,7 @@ function isTypingTarget(target: EventTarget | null) {
 }
 
 function ThemeHotkey() {
-  const { resolvedTheme, setTheme } = useTheme()
+  const { toggleTheme } = useTheme()
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -55,7 +102,7 @@ function ThemeHotkey() {
         return
       }
 
-      setTheme(resolvedTheme === "dark" ? "light" : "dark")
+      toggleTheme()
     }
 
     window.addEventListener("keydown", onKeyDown)
@@ -63,9 +110,7 @@ function ThemeHotkey() {
     return () => {
       window.removeEventListener("keydown", onKeyDown)
     }
-  }, [resolvedTheme, setTheme])
+  }, [toggleTheme])
 
   return null
 }
-
-export { ThemeProvider }

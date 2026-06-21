@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { SessionProvider } from "next-auth/react"
 
 import { ThemeProvider } from "@/components/theme-provider"
+import { type Theme } from "@/lib/theme"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { config } from "@/lib/config"
@@ -30,12 +31,18 @@ function getQueryClient() {
   return browserQueryClient
 }
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  theme,
+}: {
+  children: React.ReactNode
+  theme: Theme
+}) {
   const queryClient = getQueryClient()
 
   return (
     <SessionProvider>
-      <ThemeProvider defaultTheme="dark" enableSystem>
+      <ThemeProvider initialTheme={theme}>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider delayDuration={300}>{children}</TooltipProvider>
           {config.isDev ? <ReactQueryDevtools initialIsOpen={false} /> : null}

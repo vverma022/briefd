@@ -16,6 +16,10 @@ import type {
   updateDigestSchema,
 } from "@/shared/schemas/digest"
 import type {
+  userProfileSchema,
+  updateProfileSchema,
+} from "@/shared/schemas/profile"
+import type {
   joinWaitlistSchema,
   joinWaitlistResponseSchema,
 } from "@/shared/schemas/waitlist"
@@ -30,5 +34,7 @@ export type DigestSummary = z.infer<typeof digestSummarySchema>
 export type Digest = z.infer<typeof digestSchema>
 export type DigestListResponse = z.infer<typeof digestListResponseSchema>
 export type UpdateDigestInput = z.infer<typeof updateDigestSchema>
+export type UserProfile = z.infer<typeof userProfileSchema>
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>
 export type JoinWaitlistInput = z.infer<typeof joinWaitlistSchema>
 export type JoinWaitlistResponse = z.infer<typeof joinWaitlistResponseSchema>

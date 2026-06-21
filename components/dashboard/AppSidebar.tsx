@@ -96,38 +96,40 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
           </SidebarMenu>
         </SidebarGroup>
 
-        {activeSenders.length > 0 ? (
-          <SidebarGroup>
-            <SidebarGroupLabel>Sources</SidebarGroupLabel>
-            <SidebarMenu>
-              {activeSenders.map((s) => (
-                <SidebarMenuItem key={s.id}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={activeSender === s.senderEmail}
-                    tooltip={s.senderName ?? s.senderEmail}
+        <SidebarGroup>
+          <SidebarGroupLabel>Sources</SidebarGroupLabel>
+          <SidebarMenu>
+            {activeSenders.map((s) => (
+              <SidebarMenuItem key={s.id}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={activeSender === s.senderEmail}
+                  tooltip={s.senderName ?? s.senderEmail}
+                >
+                  <Link
+                    href={`/dashboard?senderEmail=${encodeURIComponent(s.senderEmail)}`}
                   >
-                    <Link
-                      href={`/dashboard?senderEmail=${encodeURIComponent(s.senderEmail)}`}
-                    >
-                      <span className="truncate">
-                        {s.senderName ?? s.senderEmail}
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="Manage sources">
-                  <Link href="/settings">
-                    <HugeiconsIcon icon={Settings01Icon} strokeWidth={1.5} />
-                    <span>Manage sources</span>
+                    <span className="truncate">
+                      {s.senderName ?? s.senderEmail}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
-        ) : null}
+            ))}
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === "/sources"}
+                tooltip="Manage sources"
+              >
+                <Link href="/sources">
+                  <HugeiconsIcon icon={Settings01Icon} strokeWidth={1.5} />
+                  <span>Manage sources</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>

@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 import { DM_Serif_Display, Geist_Mono, Inter } from "next/font/google"
+import { cookies } from "next/headers"
 
 import "./globals.css"
 import { Providers } from "./providers"
+import { DEFAULT_THEME, THEME_COOKIE, type Theme } from "@/lib/theme"
 import { cn } from "@/lib/utils"
 import { config } from "@/lib/config"
 
@@ -48,25 +50,33 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Resolve the theme server-side from the cookie so <html> ships with the
+  // correct class — no flash, and no inline theme script.
+  const stored = (await cookies()).get(THEME_COOKIE)?.value
+  const theme: Theme =
+    stored === "light" || stored === "dark" ? stored : DEFAULT_THEME
+
   return (
     <html
       lang="en"
       suppressHydrationWarning
+      style={{ colorScheme: theme }}
       className={cn(
         "antialiased",
         fontSans.variable,
         fontMono.variable,
         fontSerif.variable,
-        "font-sans"
+        "font-sans",
+        theme === "dark" && "dark"
       )}
     >
       <body>
-        <Providers>{children}</Providers>
+        <Providers theme={theme}>{children}</Providers>
       </body>
     </html>
   )

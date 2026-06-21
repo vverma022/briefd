@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { signOut } from "next-auth/react"
-import { useTheme } from "next-themes"
+import { useTheme } from "@/components/theme-provider"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Settings01Icon,
