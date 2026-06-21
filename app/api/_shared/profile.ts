@@ -4,7 +4,9 @@ import { prisma } from "@/lib/prisma"
 import type { UserProfile } from "@/shared/types"
 
 // Account fields surfaced to the client. Email/image are read-only (Google);
-// name + digest* are user-editable preferences.
+// name + digest*/summaryLength/ai* are user-editable preferences.
+// aiApiKeyCiphertext is selected ONLY to derive the `hasCustomKey` boolean — the
+// ciphertext itself is never serialized to the client.
 const profileSelect = {
   name: true,
   email: true,
@@ -12,6 +14,9 @@ const profileSelect = {
   digestEmailEnabled: true,
   digestDeliveryHour: true,
   digestTimezone: true,
+  summaryLength: true,
+  aiProvider: true,
+  aiApiKeyCiphertext: true,
 } satisfies Prisma.UserSelect
 
 type ProfileRow = Prisma.UserGetPayload<{ select: typeof profileSelect }>
@@ -24,6 +29,9 @@ export function serializeUserProfile(row: ProfileRow): UserProfile {
     digestEmailEnabled: row.digestEmailEnabled,
     digestDeliveryHour: row.digestDeliveryHour,
     digestTimezone: row.digestTimezone,
+    summaryLength: row.summaryLength as UserProfile["summaryLength"],
+    aiProvider: row.aiProvider as UserProfile["aiProvider"],
+    hasCustomKey: Boolean(row.aiApiKeyCiphertext),
   }
 }
 

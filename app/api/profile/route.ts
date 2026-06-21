@@ -1,5 +1,9 @@
+import { Prisma } from "@prisma/client"
+
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { encrypt } from "@/lib/crypto"
+import { validateAiKey, type AiProvider } from "@/app/api/_shared/ai"
 import { updateProfileSchema } from "@/shared/schemas"
 import { getUserProfile, serializeUserProfile } from "@/app/api/_shared/profile"
 
@@ -29,9 +33,42 @@ export async function PATCH(request: Request) {
       { status: 400 }
     )
   }
+
+  const { aiApiKey, ...rest } = parsed.data
+  const data: Prisma.UserUpdateInput = { ...rest }
+
+  if (aiApiKey !== undefined || rest.aiProvider !== undefined) {
+    const current = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { aiProvider: true, aiApiKeyCiphertext: true },
+    })
+
+    const provider = (rest.aiProvider ??
+      current?.aiProvider ??
+      "default") as AiProvider
+
+    if (provider === "default") {
+      data.aiApiKeyCiphertext = null
+    } else if (aiApiKey !== undefined) {
+      const ok = await validateAiKey(provider, aiApiKey)
+      if (!ok) {
+        return Response.json(
+          { error: `Could not verify your ${provider} API key.` },
+          { status: 400 }
+        )
+      }
+      data.aiApiKeyCiphertext = encrypt(aiApiKey)
+    } else if (!current?.aiApiKeyCiphertext) {
+      return Response.json(
+        { error: `Add an API key to use ${provider}.` },
+        { status: 400 }
+      )
+    }
+  }
+
   const row = await prisma.user.update({
     where: { id: session.user.id },
-    data: parsed.data,
+    data,
     select: {
       name: true,
       email: true,
@@ -39,6 +76,9 @@ export async function PATCH(request: Request) {
       digestEmailEnabled: true,
       digestDeliveryHour: true,
       digestTimezone: true,
+      summaryLength: true,
+      aiProvider: true,
+      aiApiKeyCiphertext: true,
     },
   })
   return Response.json(serializeUserProfile(row))

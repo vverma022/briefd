@@ -1,3 +1,7 @@
+import { redirect } from "next/navigation"
+
+import { auth } from "@/auth"
+import { prisma } from "@/lib/prisma"
 import { Bento } from "@/components/landing/Bento"
 import { CTA } from "@/components/landing/CTA"
 import { Footer } from "@/components/landing/Footer"
@@ -14,13 +18,21 @@ const proof = [
   "Read-only Gmail access",
 ]
 
-export default function Page() {
+export default async function Page() {
+  const session = await auth()
+  if (session?.user?.id) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { onboardingCompletedAt: true },
+    })
+    if (user?.onboardingCompletedAt) redirect("/dashboard")
+  }
+
   return (
     <main className="relative min-h-svh overflow-x-hidden">
       <Nav />
       <Hero />
 
-      {/* Social proof marquee */}
       <section className="relative z-10 w-full border-y border-foreground/10 py-5">
         <div className="mx-auto flex w-[92vw] flex-wrap items-center justify-center gap-x-10 gap-y-3">
           {proof.map((item) => (

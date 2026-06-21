@@ -75,7 +75,7 @@
     --accent: oklch(0 0 0 / 6%);
     --accent-foreground: oklch(0.2 0 0);
 
-    --destructive: oklch(0.45 0 0); /* monochrome, no red */
+    --destructive: oklch(0.55 0.2 25); /* true red — destructive accent */
 
     --border: oklch(0 0 0 / 10%);
     --input: oklch(0 0 0 / 12%);
@@ -134,7 +134,7 @@
     --accent: oklch(1 0 0 / 8%);
     --accent-foreground: oklch(0.98 0 0);
 
-    --destructive: oklch(0.7 0 0); /* monochrome, no red */
+    --destructive: oklch(0.7 0.19 25); /* true red — brighter for obsidian */
 
     --border: oklch(1 0 0 / 8%);
     --input: oklch(1 0 0 / 10%);
@@ -328,4 +328,20 @@ body::before {
 }
 .cn-toast-warning [data-icon] {
     color: var(--toast-warning);
+}
+
+/* ── Theme-toggle circular reveal (View Transitions API) ──────────────
+ * The ModeToggle drives a clip-path circle on the incoming snapshot. Disable
+ * the default cross-fade and stack the new theme above the old so the circle
+ * wipes it in. JS animates ::view-transition-new(root) from radius 0 → full. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+    z-index: 0;
+}
+::view-transition-new(root) {
+    z-index: 1;
 }

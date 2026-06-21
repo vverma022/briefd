@@ -1,0 +1,31 @@
+name: Hourly digest cron
+
+# Drives Briefd's sync + summarize + digest delivery. Vercel Hobby can't run an
+# hourly cron, so GitHub Actions hits the endpoint instead. The endpoint is
+# idempotent, so occasional GitHub scheduling delays are harmless.
+on:
+  schedule:
+    - cron: "0 * * * *" # top of every hour, UTC
+  workflow_dispatch: {} # manual trigger for testing
+
+concurrency:
+  group: hourly-cron
+  cancel-in-progress: false
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Hit cron endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          CRON_URL: ${{ secrets.CRON_URL }} # e.g. https://briefd.app/api/cron/run
+        run: |
+          code=$(curl -sS -o /tmp/out.txt -w "%{http_code}" \
+            --max-time 120 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${CRON_URL}")
+          echo "HTTP ${code}"
+          cat /tmp/out.txt
+          test "${code}" = "200"

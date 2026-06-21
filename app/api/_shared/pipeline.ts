@@ -1,9 +1,10 @@
 import { Prisma } from "@prisma/client"
 
 import { prisma } from "@/lib/prisma"
+import { decrypt } from "@/lib/crypto"
 import { getValidGoogleAccessToken } from "./google"
 import { listSenderMessageIds, getMessage } from "./gmail"
-import { summarizeEmail } from "./ai"
+import { summarizeEmail, type AiPrefs, type SummaryLength } from "./ai"
 
 const BATCH = 5
 const LOOKBACK_DAYS = 14
@@ -68,6 +69,36 @@ async function syncSender(
   }
 }
 
+// Resolve a user's summarization preferences (length + BYOK provider/key) once
+// per run. A decryption failure (e.g. ENCRYPTION_KEY was rotated) falls back to
+// the app's default key — that's our bug to absorb, not the user's. A *provider*
+// failure from a working-but-rejected key is handled at the call site (the
+// digest stays pending) so we never silently burn the shared key for a user who
+// set a broken custom key.
+async function resolveAiPrefs(userId: string): Promise<AiPrefs> {
+  const u = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      summaryLength: true,
+      aiProvider: true,
+      aiApiKeyCiphertext: true,
+    },
+  })
+  const length = (u?.summaryLength as SummaryLength | undefined) ?? "standard"
+  if (u && u.aiProvider !== "default" && u.aiApiKeyCiphertext) {
+    try {
+      return {
+        provider: u.aiProvider as AiPrefs["provider"],
+        apiKey: decrypt(u.aiApiKeyCiphertext),
+        length,
+      }
+    } catch {
+      // Unreadable ciphertext → fall through to the app default key.
+    }
+  }
+  return { provider: "default", length }
+}
+
 // Drain pending digests through the AI summarizer. A failure leaves the digest
 // pending (attempts incremented) so nothing is lost; the next run retries.
 export async function summarizePending(
@@ -79,10 +110,13 @@ export async function summarizePending(
     orderBy: { createdAt: "asc" },
     take: limit,
   })
+  if (pending.length === 0) return
+
+  const prefs = await resolveAiPrefs(userId)
 
   for (const d of pending) {
     try {
-      const summary = await summarizeEmail(d.rawText)
+      const summary = await summarizeEmail(d.rawText, prefs)
       await prisma.digest.update({
         where: { id: d.id },
         data: {

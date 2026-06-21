@@ -7,6 +7,7 @@ import {
   News01Icon,
   Mail01Icon,
   Bookmark02Icon,
+  Mailbox01Icon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
 
@@ -123,8 +124,20 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
                 tooltip="Manage sources"
               >
                 <Link href="/sources">
-                  <HugeiconsIcon icon={Settings01Icon} strokeWidth={1.5} />
+                  <HugeiconsIcon icon={Mailbox01Icon} strokeWidth={1.5} />
                   <span>Manage sources</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === "/settings"}
+                tooltip="Settings"
+              >
+                <Link href="/settings">
+                  <HugeiconsIcon icon={Settings01Icon} strokeWidth={1.5} />
+                  <span>Settings</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

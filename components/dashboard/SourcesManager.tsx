@@ -11,6 +11,7 @@ import {
 } from "@/queries/senders"
 import { ManualAddForm } from "@/components/onboarding/ManualAddForm"
 import { DiscoverSources } from "@/components/dashboard/DiscoverSources"
+import { ConfirmDialog } from "@/components/common/ConfirmDialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -74,14 +75,37 @@ export function SourcesManager() {
                     {s.senderEmail}
                   </span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() => remove.mutate(s.id)}
-                  aria-label="Remove source"
+                <ConfirmDialog
+                  title="Remove this source?"
+                  description={`Briefd will stop summarizing new emails from ${
+                    s.senderName ?? s.senderEmail
+                  }. Existing briefs stay in your dashboard.`}
+                  confirmLabel="Remove"
+                  destructive
+                  onConfirm={() =>
+                    new Promise<void>((resolve, reject) =>
+                      remove.mutate(s.id, {
+                        onSuccess: () => resolve(),
+                        onError: (e) => {
+                          notify.error(
+                            "Couldn't remove source",
+                            e instanceof Error ? e.message : undefined
+                          )
+                          reject(e)
+                        },
+                      })
+                    )
+                  }
                 >
-                  <HugeiconsIcon icon={Delete02Icon} strokeWidth={1.5} />
-                </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-foreground/55 hover:bg-destructive/10 hover:text-destructive"
+                    aria-label="Remove source"
+                  >
+                    <HugeiconsIcon icon={Delete02Icon} strokeWidth={1.5} />
+                  </Button>
+                </ConfirmDialog>
               </div>
             ))}
           </div>

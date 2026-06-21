@@ -14,11 +14,22 @@ model User {
   emailVerified         DateTime?
   image                 String?
   onboardingCompletedAt DateTime?
-  // Email-digest delivery preferences. Sending itself is wired up later; these
-  // just persist the user's choice. digestDeliveryHour is 0-23 in their tz.
+  // Email-digest delivery preferences. digestDeliveryHour is 0-23 in their tz.
   digestEmailEnabled    Boolean         @default(false)
   digestDeliveryHour    Int             @default(8)
   digestTimezone        String?
+  // Per-day send-cadence guard: the local-day key "YYYY-MM-DD" (in the user's
+  // tz) of the last digest we sent. DST-safe — see app/api/_shared/delivery.ts.
+  lastDigestSentOn      String?
+  // Summarization preferences. summaryLength tunes the AI prompt verbosity.
+  // BYOK: when aiProvider != "default", summaries use the user's own key
+  // (aiApiKeyCiphertext, AES-256-GCM via lib/crypto.ts) on the chosen provider;
+  // otherwise the app's default Gemini key is used. Ciphertext NEVER leaves the
+  // server — the API exposes only a derived `hasCustomKey` boolean.
+  summaryLength         String          @default("standard")
+  aiProvider            String          @default("default")
+  aiModel               String?
+  aiApiKeyCiphertext    String?
   accounts              Account[]
   sessions              Session[]
   watchedSenders        WatchedSender[]
@@ -108,6 +119,9 @@ model Digest {
   isRead               Boolean        @default(false)
   isSaved              Boolean        @default(false)
   createdAt            DateTime       @default(now())
+  // Exactly-once content guard: set when this digest is included in a sent
+  // email so it never appears in a second one. Null = not yet emailed.
+  deliveredAt          DateTime?
   user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // LOAD-BEARING idempotency guard — one digest per Gmail message per user.
@@ -115,6 +129,7 @@ model Digest {
   @@index([userId, createdAt(sort: Desc)])
   @@index([userId, isRead, createdAt(sort: Desc)])
   @@index([userId, isSaved, createdAt(sort: Desc)])
+  @@index([userId, deliveredAt])
   @@index([summarizationPending, summarizeAttempts])
   @@map("digests")
 }

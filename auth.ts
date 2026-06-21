@@ -43,8 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             picture =
               ((await res.json()) as { picture?: string }).picture ?? null
           }
-        } catch {
-        }
+        } catch {}
       }
       if (picture && picture !== user.image) {
         await prisma.user.update({
