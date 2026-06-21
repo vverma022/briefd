@@ -1,6 +1,4 @@
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Menu01Icon } from "@hugeicons/core-free-icons"
 
 import { BriefdLogo } from "@/components/brand/logo"
 import { config } from "@/lib/config"
@@ -46,13 +44,6 @@ export function Nav() {
           </a>
         )}
       </nav>
-
-      <button
-        aria-label="Open menu"
-        className="flex size-11 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 text-foreground md:hidden"
-      >
-        <HugeiconsIcon icon={Menu01Icon} size={20} strokeWidth={1.5} />
-      </button>
     </header>
   )
 }
