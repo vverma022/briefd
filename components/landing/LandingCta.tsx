@@ -3,5 +3,5 @@ import { WaitlistForm } from "@/components/landing/WaitlistForm"
 import { config } from "@/lib/config"
 
 export function LandingCta() {
-  return config.isDev ? <GetStarted /> : <WaitlistForm />
+  return config.signupsOpen ? <GetStarted /> : <WaitlistForm />
 }

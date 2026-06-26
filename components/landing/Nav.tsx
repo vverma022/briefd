@@ -28,12 +28,12 @@ export function Nav() {
             </a>
           ))}
         </div>
-        {config.isDev ? (
+        {config.signupsOpen ? (
           <Link
             href="/onboarding"
             className="silver-btn rounded-full px-6 py-3 font-mono text-[11px] font-bold tracking-[0.25em] uppercase"
           >
-            Get started
+            Sign up
           </Link>
         ) : (
           <a

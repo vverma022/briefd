@@ -2,6 +2,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
 
 import { LandingCta } from "@/components/landing/LandingCta"
+import { config } from "@/lib/config"
 
 const metadata = [
   { label: "Source", value: "Your Gmail inbox" },
@@ -19,7 +20,9 @@ export function Hero() {
         <div className="animate-slide-up flex items-center gap-3 rounded-full border border-foreground/10 bg-foreground/5 px-5 py-2">
           <span className="size-1.5 rounded-full bg-foreground" />
           <span className="font-mono text-[10px] tracking-[0.4em] text-foreground/60 uppercase">
-            PWA · Now accepting waitlist
+            {config.signupsOpen
+              ? "PWA · Now in early access"
+              : "PWA · Now accepting waitlist"}
           </span>
         </div>
 

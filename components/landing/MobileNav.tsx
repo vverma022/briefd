@@ -19,8 +19,8 @@ const items: { icon: IconSvgElement; label: string; href: string }[] = [
   { icon: BookOpen01Icon, label: "How", href: "#features" },
   {
     icon: SparklesIcon,
-    label: config.isDev ? "Start" : "Join",
-    href: config.isDev ? "/onboarding" : "#join",
+    label: config.signupsOpen ? "Sign up" : "Join",
+    href: config.signupsOpen ? "/onboarding" : "#join",
   },
   { icon: Mail01Icon, label: "Sources", href: "#sources" },
   { icon: StarIcon, label: "Reviews", href: "#reviews" },

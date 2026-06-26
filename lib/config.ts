@@ -3,6 +3,11 @@ import { normalizeUrl } from "@/lib/utils"
 export const config = {
   isDev: process.env.NODE_ENV === "development",
   isProd: process.env.NODE_ENV === "production",
+  // Whether public sign-up is open. When true the landing shows a "Sign up" CTA
+  // (→ /onboarding → Google); when false it shows the waitlist. Open by default;
+  // set NEXT_PUBLIC_SIGNUPS_OPEN=false to fall back to the waitlist. Must be a
+  // NEXT_PUBLIC_ var so the client-rendered MobileNav can read it.
+  signupsOpen: process.env.NEXT_PUBLIC_SIGNUPS_OPEN !== "false",
   site: {
     url: normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL, "https://briefd.app"),
     email: "vermavasu069@gmail.com",
