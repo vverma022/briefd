@@ -6,7 +6,7 @@ import {
 } from "node:crypto"
 
 const ALGORITHM: CipherGCMTypes = "aes-256-gcm"
-const IV_BYTES = 12 
+const IV_BYTES = 12
 
 function key(): Buffer {
   const raw = process.env.ENCRYPTION_KEY

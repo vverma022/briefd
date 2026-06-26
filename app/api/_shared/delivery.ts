@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { config } from "@/lib/config"
 import { sendMail } from "@/lib/mailer"
+import { sendPushToUser } from "@/lib/push"
 import { digestEmail, type DigestEmailItem } from "@/lib/emails/digest"
 
 // Most briefs we put in one email. Beyond this, the rest stay undelivered and
@@ -64,6 +65,7 @@ function dateLabel(instant: Date, tz: string): string {
 const userSelect = {
   id: true,
   email: true,
+  digestEmailEnabled: true,
   digestDeliveryHour: true,
   digestTimezone: true,
   lastDigestSentOn: true,
@@ -92,8 +94,6 @@ async function senderNames(
 }
 
 async function deliverForUser(user: DueUser, now: Date): Promise<boolean> {
-  if (!user.email) return false
-
   const tz = user.digestTimezone ?? "UTC"
   const lp = localParts(now, tz)
   if (!lp) return false // unusable tz → never send at the wrong hour
@@ -134,15 +134,38 @@ async function deliverForUser(user: DueUser, now: Date): Promise<boolean> {
     takeaways: r.summary?.takeaways ?? [],
   }))
 
-  const dashboardUrl = `${config.site.url.replace(/\/$/, "")}/dashboard`
-  const email = digestEmail({
-    items,
-    extraCount,
-    dashboardUrl,
-    dateLabel: dateLabel(now, tz),
-  })
+  const siteUrl = config.site.url.replace(/\/$/, "")
+  const dashboardUrl = `${siteUrl}/dashboard`
 
-  await sendMail({ to: user.email, ...email })
+  // Two channels, one digest moment. Email and push share the idempotency guards
+  // below; we only commit them if at least one channel actually delivered.
+  let delivered = false
+
+  if (user.digestEmailEnabled && user.email) {
+    const email = digestEmail({
+      items,
+      extraCount,
+      dashboardUrl,
+      dateLabel: dateLabel(now, tz),
+    })
+    await sendMail({
+      to: user.email,
+      ...email,
+      headers: { "List-Unsubscribe": `<${siteUrl}/settings>` },
+    })
+    delivered = true
+  }
+
+  const pushed = await sendPushToUser(user.id, {
+    title: "Your daily brief",
+    body: `${total} new ${total === 1 ? "brief" : "briefs"} ready to read.`,
+    url: dashboardUrl,
+  })
+  if (pushed > 0) delivered = true
+
+  // Push-only user whose subscriptions are all dead (pruned) → nothing went out;
+  // skip without advancing so they're retried after re-subscribing.
+  if (!delivered) return false
 
   // Mark exactly the sent items delivered AND advance the day key together, so
   // we never advance the cadence guard without recording what went out (and
@@ -168,8 +191,12 @@ async function deliverForUser(user: DueUser, now: Date): Promise<boolean> {
 export async function deliverDueDigests(
   now: Date = new Date()
 ): Promise<{ delivered: number }> {
+  // Due for a digest via EITHER channel: email enabled, or at least one push
+  // subscription on file.
   const users = await prisma.user.findMany({
-    where: { digestEmailEnabled: true },
+    where: {
+      OR: [{ digestEmailEnabled: true }, { pushSubscriptions: { some: {} } }],
+    },
     select: userSelect,
   })
 

@@ -9,6 +9,7 @@ import {
   Bookmark02Icon,
   Mailbox01Icon,
   Settings01Icon,
+  Idea01Icon,
 } from "@hugeicons/core-free-icons"
 
 import {
@@ -28,6 +29,7 @@ import { BriefdLogo } from "@/components/brand/logo"
 import { useSendersQuery } from "@/queries/senders"
 import { SyncButton } from "@/components/dashboard/SyncButton"
 import { UserMenu, type SidebarUser } from "@/components/dashboard/UserMenu"
+import { FeatureRequestDialog } from "@/components/dashboard/FeatureRequestDialog"
 
 export function AppSidebar({ user }: { user: SidebarUser }) {
   const pathname = usePathname()
@@ -147,6 +149,14 @@ export function AppSidebar({ user }: { user: SidebarUser }) {
 
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <FeatureRequestDialog>
+              <SidebarMenuButton tooltip="Request a feature">
+                <HugeiconsIcon icon={Idea01Icon} strokeWidth={1.5} />
+                <span>Request a feature</span>
+              </SidebarMenuButton>
+            </FeatureRequestDialog>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SyncButton />
           </SidebarMenuItem>

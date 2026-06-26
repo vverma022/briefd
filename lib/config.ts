@@ -24,6 +24,13 @@ export const config = {
     model: process.env.AI_MODEL ?? "gemini-2.5-flash",
   },
   cronSecret: process.env.CRON_SECRET,
+  push: {
+    // VAPID keys for Web Push. The public key is also exposed to the client via
+    // NEXT_PUBLIC_VAPID_PUBLIC_KEY; the private key is server-only.
+    publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    privateKey: process.env.VAPID_PRIVATE_KEY,
+    subject: process.env.VAPID_SUBJECT ?? "mailto:vermavasu069@gmail.com",
+  },
   smtp: {
     host: process.env.SMTP_HOST ?? "smtp.gmail.com",
     port: Number(process.env.SMTP_PORT ?? 465),

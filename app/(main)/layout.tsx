@@ -32,7 +32,7 @@ export default async function MainLayout({
         />
       </Suspense>
       <SidebarInset>
-        <header className="flex h-14 items-center gap-3 border-b border-foreground/10 px-4 md:hidden">
+        <header className="flex h-14 items-center gap-3 border-b border-foreground/10 px-4 pt-[env(safe-area-inset-top)] md:hidden">
           <SidebarTrigger />
           <Link href="/dashboard" aria-label="Briefd">
             <BriefdLogo />

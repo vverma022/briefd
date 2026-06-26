@@ -1,9 +1,10 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { DM_Serif_Display, Geist_Mono, Inter } from "next/font/google"
 import { cookies } from "next/headers"
 
 import "./globals.css"
 import { Providers } from "./providers"
+import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister"
 import { DEFAULT_THEME, THEME_COOKIE, type Theme } from "@/lib/theme"
 import { cn } from "@/lib/utils"
 import { config } from "@/lib/config"
@@ -36,6 +37,12 @@ export const metadata: Metadata = {
   title,
   description,
   applicationName: "Briefd",
+  // Installable PWA / iOS home-screen app metadata.
+  appleWebApp: {
+    capable: true,
+    title: "Briefd",
+    statusBarStyle: "black-translucent",
+  },
   openGraph: {
     type: "website",
     siteName: "Briefd",
@@ -48,6 +55,18 @@ export const metadata: Metadata = {
     title,
     description,
   },
+}
+
+// In Next.js 16, themeColor/viewport live in their own export (NOT in metadata).
+// viewportFit "cover" lets the UI extend under notches and enables env(safe-area-*).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#080808" },
+  ],
 }
 
 export default async function RootLayout({
@@ -76,6 +95,7 @@ export default async function RootLayout({
       )}
     >
       <body>
+        <ServiceWorkerRegister />
         <Providers theme={theme}>{children}</Providers>
       </body>
     </html>

@@ -23,6 +23,7 @@ import type {
   joinWaitlistSchema,
   joinWaitlistResponseSchema,
 } from "@/shared/schemas/waitlist"
+import type { featureRequestSchema } from "@/shared/schemas/feature-request"
 
 export type SenderInput = z.infer<typeof senderInputSchema>
 export type AddSendersInput = z.infer<typeof addSendersSchema>
@@ -38,3 +39,4 @@ export type UserProfile = z.infer<typeof userProfileSchema>
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>
 export type JoinWaitlistInput = z.infer<typeof joinWaitlistSchema>
 export type JoinWaitlistResponse = z.infer<typeof joinWaitlistResponseSchema>
+export type FeatureRequestInput = z.infer<typeof featureRequestSchema>

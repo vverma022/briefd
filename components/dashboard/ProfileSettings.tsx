@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/select"
 import { SaveButton } from "@/components/common/SaveButton"
 import { ConfirmDialog } from "@/components/common/ConfirmDialog"
+import { SettingsSection } from "@/components/dashboard/SettingsSection"
+import { PushSettings } from "@/components/dashboard/PushSettings"
 import { notify } from "@/lib/toast"
 import { cn } from "@/lib/utils"
 import type { UpdateProfileInput, UserProfile } from "@/shared/types"
@@ -176,35 +178,6 @@ function errMessage(e: unknown) {
   return e instanceof Error ? e.message : undefined
 }
 
-// Stagger settings sections in on mount, matching the app's editorial easing.
-function Section({
-  index,
-  className,
-  children,
-}: {
-  index: number
-  className?: string
-  children: React.ReactNode
-}) {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.5,
-        ease: [0.16, 1, 0.3, 1],
-        delay: index * 0.07,
-      }}
-      className={cn(
-        "flex flex-col gap-6 rounded-2xl border border-foreground/10 bg-foreground/2 p-6",
-        className
-      )}
-    >
-      {children}
-    </motion.section>
-  )
-}
-
 export function ProfileSettings({ initial }: { initial: UserProfile }) {
   const router = useRouter()
   const { data } = useProfileQuery(initial)
@@ -314,7 +287,7 @@ export function ProfileSettings({ initial }: { initial: UserProfile }) {
   return (
     <div className="flex flex-col gap-6">
       {/* Account / profile */}
-      <Section index={0}>
+      <SettingsSection index={0}>
         <div className="flex items-center gap-4">
           <Avatar className="size-16 rounded-2xl">
             {profile.image ? <AvatarImage src={profile.image} alt="" /> : null}
@@ -355,10 +328,10 @@ export function ProfileSettings({ initial }: { initial: UserProfile }) {
             here.
           </p>
         </div>
-      </Section>
+      </SettingsSection>
 
       {/* Connected account */}
-      <Section index={1} className="gap-4">
+      <SettingsSection index={1} className="gap-4">
         <div className="flex flex-col gap-1">
           <h3 className="font-sans text-sm font-medium text-foreground">
             Connected account
@@ -385,10 +358,10 @@ export function ProfileSettings({ initial }: { initial: UserProfile }) {
             Switch Google account
           </Button>
         </div>
-      </Section>
+      </SettingsSection>
 
       {/* Email digest preferences */}
-      <Section index={2} className="gap-5">
+      <SettingsSection index={2} className="gap-5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1">
             <h3 className="font-sans text-sm font-medium text-foreground">
@@ -436,10 +409,12 @@ export function ProfileSettings({ initial }: { initial: UserProfile }) {
             </div>
           </div>
         ) : null}
-      </Section>
+      </SettingsSection>
 
       {/* Summarization preferences */}
-      <Section index={3} className="gap-5">
+      <PushSettings index={3} />
+
+      <SettingsSection index={4} className="gap-5">
         <div className="flex flex-col gap-1">
           <h3 className="font-sans text-sm font-medium text-foreground">
             Summarization
@@ -549,7 +524,7 @@ export function ProfileSettings({ initial }: { initial: UserProfile }) {
             <SaveButton onSave={saveProvider}>Save provider</SaveButton>
           </div>
         </div>
-      </Section>
+      </SettingsSection>
     </div>
   )
 }

@@ -1,7 +1,8 @@
 "use client"
 
+import * as React from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { RefreshIcon } from "@hugeicons/core-free-icons"
+import { RefreshIcon, Tick02Icon } from "@hugeicons/core-free-icons"
 
 import { SidebarMenuButton } from "@/components/ui/sidebar"
 import { useSyncMutation } from "@/queries/sync"
@@ -11,10 +12,20 @@ import { cn } from "@/lib/utils"
 
 export function SyncButton() {
   const sync = useSyncMutation()
+  const [done, setDone] = React.useState(false)
+  const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  )
+
+  React.useEffect(() => () => clearTimeout(timer.current), [])
 
   function onSync() {
     sync.mutate(undefined, {
-      onSuccess: () => notify.success("Sync started", "Fetching new briefs…"),
+      onSuccess: () => {
+        notify.success("Sync started", "Fetching new briefs…")
+        setDone(true)
+        timer.current = setTimeout(() => setDone(false), 1800)
+      },
       onError: (e) =>
         e instanceof ReconnectRequiredError
           ? notify.warning("Reconnect Gmail", e.message)
@@ -32,11 +43,17 @@ export function SyncButton() {
       tooltip="Sync now"
     >
       <HugeiconsIcon
-        icon={RefreshIcon}
-        strokeWidth={1.5}
-        className={cn(sync.isPending && "animate-spin")}
+        icon={done ? Tick02Icon : RefreshIcon}
+        strokeWidth={done ? 2.5 : 1.5}
+        className={cn(
+          "transition-colors",
+          sync.isPending && "animate-spin",
+          done && "text-(--toast-success)"
+        )}
       />
-      <span>{sync.isPending ? "Syncing…" : "Sync now"}</span>
+      <span className={cn(done && "text-(--toast-success)")}>
+        {sync.isPending ? "Syncing…" : done ? "Synced" : "Sync now"}
+      </span>
     </SidebarMenuButton>
   )
 }

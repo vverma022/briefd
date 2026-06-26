@@ -12,11 +12,11 @@ export function DigestCard({ digest }: { digest: Digest }) {
   return (
     <Link
       href={`/digest/${digest.id}`}
-      className="bento-card block rounded-2xl border border-foreground/10 p-5"
+      className="bento-card block rounded-2xl border border-foreground/10 p-5 transition-transform duration-200 active:scale-[0.99]"
     >
       <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.3em] text-foreground/40 uppercase">
         {!digest.isRead ? (
-          <span className="size-1.5 shrink-0 rounded-full bg-foreground" />
+          <span className="size-1.5 shrink-0 rounded-full bg-foreground motion-safe:animate-pulse" />
         ) : null}
         <span className="truncate">
           {digest.senderName ?? digest.senderEmail}

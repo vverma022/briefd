@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { motion } from "motion/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowLeft01Icon,
@@ -14,6 +15,20 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Digest } from "@/shared/types"
+
+// Stagger the brief in: header → summary → actions.
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.04 } },
+}
+const item = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const },
+  },
+}
 
 export function DigestReader({ initial }: { initial: Digest }) {
   const { data } = useDigestQuery(initial.id, initial)
@@ -33,7 +48,12 @@ export function DigestReader({ initial }: { initial: Digest }) {
   }`
 
   return (
-    <article className="mx-auto flex max-w-2xl flex-col gap-6 py-2">
+    <motion.article
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="mx-auto flex max-w-2xl flex-col gap-6 py-2"
+    >
       <Link
         href="/dashboard"
         className="flex w-fit items-center gap-2 font-mono text-[10px] tracking-[0.3em] text-foreground/50 uppercase transition-colors hover:text-foreground"
@@ -42,7 +62,7 @@ export function DigestReader({ initial }: { initial: Digest }) {
         Back
       </Link>
 
-      <div className="flex flex-col gap-3">
+      <motion.div variants={item} className="flex flex-col gap-3">
         <span className="font-mono text-[10px] tracking-[0.3em] text-foreground/40 uppercase">
           {digest.senderName ?? digest.senderEmail}
         </span>
@@ -55,34 +75,39 @@ export function DigestReader({ initial }: { initial: Digest }) {
             <span>{digest.summary.readingTimeMinutes} min read</span>
           </div>
         ) : null}
-      </div>
+      </motion.div>
 
-      {digest.summary ? (
-        <>
-          <p className="font-sans text-base leading-relaxed font-light text-foreground/80">
-            {digest.summary.tldr}
+      <motion.div variants={item} className="flex flex-col gap-6">
+        {digest.summary ? (
+          <>
+            <p className="font-sans text-base leading-relaxed font-light text-foreground/80">
+              {digest.summary.tldr}
+            </p>
+            <ul className="flex flex-col gap-3 border-t border-foreground/10 pt-6">
+              {digest.summary.takeaways.map((t, i) => (
+                <li
+                  key={i}
+                  className="flex gap-3 font-sans text-sm leading-relaxed font-light text-foreground/75"
+                >
+                  <span className="font-mono text-xs text-foreground/30">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p className="font-mono text-[11px] tracking-[0.2em] text-foreground/50 uppercase">
+            Summarizing… this brief will fill in shortly.
           </p>
-          <ul className="flex flex-col gap-3 border-t border-foreground/10 pt-6">
-            {digest.summary.takeaways.map((t, i) => (
-              <li
-                key={i}
-                className="flex gap-3 font-sans text-sm leading-relaxed font-light text-foreground/75"
-              >
-                <span className="font-mono text-xs text-foreground/30">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span>{t}</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : (
-        <p className="font-mono text-[11px] tracking-[0.2em] text-foreground/50 uppercase">
-          Summarizing… this brief will fill in shortly.
-        </p>
-      )}
+        )}
+      </motion.div>
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-foreground/10 pt-6">
+      <motion.div
+        variants={item}
+        className="flex flex-wrap items-center gap-3 border-t border-foreground/10 pt-6"
+      >
         <Button asChild variant="silver" size="lg">
           <a href={gmailUrl} target="_blank" rel="noopener noreferrer">
             <HugeiconsIcon icon={LinkSquare02Icon} strokeWidth={2} />
@@ -106,7 +131,7 @@ export function DigestReader({ initial }: { initial: Digest }) {
           />
           {digest.isSaved ? "Saved" : "Save"}
         </Button>
-      </div>
-    </article>
+      </motion.div>
+    </motion.article>
   )
 }

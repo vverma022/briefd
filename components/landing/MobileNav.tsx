@@ -59,12 +59,16 @@ export function MobileNav() {
   return (
     <nav
       className={cn(
-        "mobile-nav-blur fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full px-2 py-2 transition-all duration-500 md:hidden",
+        "mobile-nav-blur fixed left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-full px-2 py-2 transition-all duration-500 md:hidden",
         visible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-32 opacity-0"
       )}
-      style={{ transitionTimingFunction: "cubic-bezier(0.16,1,0.3,1)" }}
+      style={{
+        transitionTimingFunction: "cubic-bezier(0.16,1,0.3,1)",
+        // Clear the home indicator on notched devices.
+        bottom: "calc(1.5rem + env(safe-area-inset-bottom))",
+      }}
     >
       {items.map((item) => {
         const primary = item.href === "/onboarding" || item.label === "Join"

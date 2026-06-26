@@ -205,7 +205,7 @@ export function digestEmail(args: {
           <!-- sub-footer -->
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr><td style="height:22px;line-height:22px;font-size:0;">&nbsp;</td></tr>
-            <tr><td align="center" style="font-family:${sans};font-size:11px;line-height:1.5;color:${faint};">You receive this because daily email digests are on. Manage it in Briefd settings.</td></tr>
+            <tr><td align="center" style="font-family:${sans};font-size:11px;line-height:1.5;color:${faint};">You receive this because daily email digests are on. <a href="${url}/settings" style="color:${muted};text-decoration:underline;">Manage in settings</a>.</td></tr>
           </table>
 
         </div>

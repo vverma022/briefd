@@ -26,6 +26,7 @@ export async function sendMail(message: {
   subject: string
   html: string
   text: string
+  headers?: Record<string, string>
 }): Promise<void> {
   await getTransporter().sendMail({ from: config.smtp.from, ...message })
 }
